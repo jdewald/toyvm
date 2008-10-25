@@ -1,0 +1,62 @@
+﻿<UserCombinePreferences version="1.0" filename="/home/jdewald/ToyVM/ToyVM.mds">
+  <Files>
+    <File name="Welcome" />
+    <File name="ToyVM/bytecodes/ByteCode_if.cs" line="26" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_jsr.cs" line="27" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_if_acmp.cs" line="16" column="3" />
+    <File name="ToyVM/bytecodes/ByteCode_if_icmp.cs" line="90" column="49" />
+    <File name="ToyVM/MethodInfo.cs" line="149" column="2" />
+    <File name="ToyVM/bytecodes/ByteCode_ret.cs" line="28" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_bastore.cs" line="10" column="1" />
+    <File name="ToyVM/bytecodes/ByteCode_baload.cs" line="26" column="27" />
+    <File name="ToyVM/bytecodes/ByteCode_castore.cs" line="32" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_caload.cs" line="32" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_fcmp.cs" line="17" column="4" />
+    <File name="../src/others/classpath-0.97.2/java/nio/charset/CharsetEncoder.java" line="70" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_fload.cs" line="18" column="28" />
+    <File name="ToyVM/ToyVM.cs" line="1" column="1" />
+    <File name="ToyVM/ToyVMObject.cs" line="46" column="15" />
+    <File name="ToyVM/bytecodes/ByteCode_invokespecial.cs" line="42" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_invokevirtual.cs" line="39" column="29" />
+    <File name="ToyVM/ConstantPoolInfo_MethodRef.cs" line="32" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_i2c.cs" line="28" column="4" />
+    <File name="ToyVM/bytecodes/ByteCode_i2b.cs" line="20" column="33" />
+    <File name="ToyVM/vmi/java/lang/VMSystem.cs" line="96" column="7" />
+    <File name="../src/others/classpath-0.97.2/vm/reference/gnu/java/nio/VMChannel.java" line="231" column="1" />
+    <File name="ToyVM/StackFrame.cs" line="37" column="4" />
+    <File name="ToyVM/vmi/gnu/java/nio/VMChannel.cs" line="63" column="16" />
+    <File name="../src/others/classpath-0.97.2/java/nio/ByteBuffer.java" line="54" column="45" />
+    <File name="ToyVM/vmi/gnu/classpath/VMSystemProperties.cs" line="25" column="1" />
+    <File name="ToyVM/ClassFile.cs" line="374" column="1" />
+    <File name="../src/others/classpath-0.97.2/java/nio/ByteBufferImpl.java" line="156" column="29" />
+    <File name="ToyVM/bytecodes/ByteCode_arraylength.cs" line="41" column="3" />
+  </Files>
+  <Views>
+    <ViewMemento id="ProjectPad">
+      <Node expanded="True">
+        <Node name="ToyVM" expanded="True">
+          <Node name="bytecodes" expanded="True" />
+          <Node name="vmi" expanded="True">
+            <Node name="gnu" expanded="True">
+              <Node name="classpath" expanded="True" />
+              <Node name="java" expanded="True">
+                <Node name="nio" expanded="True" />
+              </Node>
+            </Node>
+            <Node name="java" expanded="True">
+              <Node name="lang" expanded="True" />
+            </Node>
+          </Node>
+          <Node name="ClassFile.cs" selected="True" />
+        </Node>
+      </Node>
+    </ViewMemento>
+    <ViewMemento id="ClassPad">
+      <Node expanded="True" />
+    </ViewMemento>
+  </Views>
+  <Properties>
+    <Property key="ActiveWindow" value="/home/jdewald/ToyVM/ToyVM/ClassFile.cs" />
+    <Property key="ActiveConfiguration" value="Debug" />
+  </Properties>
+</UserCombinePreferences>
