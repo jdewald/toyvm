@@ -2,13 +2,26 @@ using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using ToyVM.bytecodes;
+using log4net;
 namespace ToyVM
 {
+	public delegate void MethodInfoEnterEvent(string className, string methodName, string descriptor);
+	public delegate void MethodInfoExitEvent(string className,string methodName,string descriptor);
+	public delegate void MethodInfoByteCodeEnterEvent(string byteCodeName);
+	public delegate void MethodInfoByteCodeExitEvent(string byteCodeName);
+
 	/// <summary>
 	/// Represents a Java method, including its actual bytecode (contained in a "Code" attribute)
 	/// </summary>
 	public class MethodInfo
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(MethodInfo));
+		
+		public static event MethodInfoEnterEvent EnterEvent;
+		public static event MethodInfoExitEvent ExitEvent;
+		public static event MethodInfoByteCodeEnterEvent ByteCodeEnterEvent;
+		public static event MethodInfoByteCodeExitEvent ByteCodeExitEvent;
+		
 		UInt16 accessFlags;
 		UInt16 nameIndex;
 		UInt16 descriptorIndex;
@@ -20,7 +33,7 @@ namespace ToyVM
 		ConstantPoolInfo_UTF8 name;
 		ConstantPoolInfo_UTF8 descriptor;
 		ClassFile classFile;
-		
+		string classFileName;
 		public static readonly int ACCESS_PUBLIC =    0x0001;
 		public static readonly int ACCESS_PRIVATE =   0x0002;
 		public static readonly int ACCESS_PROTECTED = 0x0004;
@@ -40,7 +53,7 @@ namespace ToyVM
 			descriptorIndex = reader.ReadUInt16();
 			attributeCount = reader.ReadUInt16();
 
-			Console.WriteLine("Method = {0}{1}",pool[nameIndex - 1],pool[descriptorIndex-1]);
+			if (log.IsDebugEnabled) log.DebugFormat("Method = {0}{1}",pool[nameIndex - 1],pool[descriptorIndex-1]);
 			attributes = new AttributeInfo[attributeCount];
 			for (int i = 0; i < attributeCount; i++)
 			{
@@ -52,7 +65,7 @@ namespace ToyVM
 				
 			}
 
-		//	Console.WriteLine("Name should be {0}",pool[nameIndex-1]);
+		//	if (log.IsDebugEnabled) log.DebugFormat("Name should be {0}",pool[nameIndex-1]);
 			name = (ConstantPoolInfo_UTF8)pool[nameIndex - 1];
 			descriptor = (ConstantPoolInfo_UTF8)pool[descriptorIndex - 1];
 		
@@ -61,8 +74,10 @@ namespace ToyVM
 
 		public void SetClassFile(ClassFile clazz){
 			this.classFile = clazz;
+			classFileName = classFile.GetName();
 		}
 		public void execute(StackFrame frame){
+			if ( EnterEvent != null) { EnterEvent(classFileName, name.getUTF8String(),descriptor.getUTF8String()); }
 			if (! isNative()) {
 				Hashtable byteCodes = methodCode.getCode();
 			
@@ -73,11 +88,14 @@ namespace ToyVM
 					bc = (ByteCode) byteCodes[frame.getProgramCounter()];
 					if (bc != null){
 						frame.setByteCode(bc);
-						Console.WriteLine("{0}: {1}",frame.getProgramCounter(),bc);
+						
+						if (log.IsDebugEnabled) log.DebugFormat("{0}: {1}",frame.getProgramCounter(),bc);
 						if (methodCode.hasLineNumbers() && methodCode.getLineNumber((UInt16)frame.getProgramCounter()) != 0){
-							Console.WriteLine(classFile.GetName() + ":{0}",methodCode.getLineNumber((UInt16)frame.getProgramCounter()));
+							if (log.IsDebugEnabled) log.DebugFormat(classFile.GetName() + ":{0}",methodCode.getLineNumber((UInt16)frame.getProgramCounter()));
 						}
+						if (ByteCodeEnterEvent != null) { ByteCodeEnterEvent(bc.getName()); }
 						bc.execute(frame);
+						if (ByteCodeExitEvent != null) { ByteCodeExitEvent(bc.getName()); }
 						// the instruction might have moved the counter
 						// but it is assumed to not have accounted
 						// for its own length
@@ -94,6 +112,7 @@ namespace ToyVM
 			else {
 				throw new ToyVMException("Method is native!",frame);
 			}
+			if (ExitEvent != null) { ExitEvent(classFileName, name.getUTF8String(),descriptor.getUTF8String()); }
 		}
 		
 		public bool isNative(){

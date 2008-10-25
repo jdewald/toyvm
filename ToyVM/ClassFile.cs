@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Reflection.Emit;
 using ToyVM.native.gnu.java;
-
+using log4net;
 //using ToyVM.native;
 namespace ToyVM
 {
@@ -12,6 +12,7 @@ namespace ToyVM
 	/// </summary>
 	public class ClassFile
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ClassFile));
 		public static readonly ClassFile CLASS_INT = new ClassFile();
 		public static readonly ClassFile CLASS_FLOAT = new ClassFile();
 		public static readonly ClassFile CLASS_CHAR = new ClassFile();
@@ -76,22 +77,22 @@ namespace ToyVM
 			// if it doesn't start with CLASS_FILE_MAGIC, it ain't even valid!
 			if (magic != CLASS_FILE_MAGIC)
 			{
-				System.Console.WriteLine("Did not get proper magic...");
-				System.Console.WriteLine("{0:X}",CLASS_FILE_MAGIC);
-				System.Console.WriteLine("{0:X}",magic);
+				if (log.IsDebugEnabled) log.DebugFormat("Did not get proper magic...");
+				if (log.IsDebugEnabled) log.DebugFormat("{0:X}",CLASS_FILE_MAGIC);
+				if (log.IsDebugEnabled) log.DebugFormat("{0:X}",magic);
 			}
 			else 
 			{
 				minor = reader.ReadUInt16();
 				major = reader.ReadUInt16();
-				Console.WriteLine("{0}.{1}",major,minor);
+				if (log.IsDebugEnabled) log.DebugFormat("{0}.{1}",major,minor);
 
 				/**
 				 * The constant pool is the set of Strings, method names, class names and numbers
 				 * that will be referenced throughout the class 
 				 */
 				constantPoolCount = (UInt16)(reader.ReadUInt16() - 1); // the value here is the maximum 1-indexed entry
-				Console.WriteLine("{0} constant pool entries",constantPoolCount);
+				if (log.IsDebugEnabled) log.DebugFormat("{0} constant pool entries",constantPoolCount);
 				constantPool = new ConstantPoolInfo[constantPoolCount];
 
 				/**
@@ -107,12 +108,12 @@ namespace ToyVM
 					}
 					
 					if (constantPool[i] is ConstantPoolInfo_UTF8){
-						ConstantPoolInfo_UTF8 utf8 = (ConstantPoolInfo_UTF8) constantPool[i];
+						//ConstantPoolInfo_UTF8 utf8 = (ConstantPoolInfo_UTF8) constantPool[i];
 						
-						//Console.WriteLine("{0} Read {1}:{2}",i+1,constantPool[i].getName(),utf8.isUnicode ?  "(UNICODE STRING)" : constantPool[i].ToString());
+						//if (log.IsDebugEnabled) log.DebugFormat("{0} Read {1}:{2}",i+1,constantPool[i].getName(),utf8.isUnicode ?  "(UNICODE STRING)" : constantPool[i].ToString());
 					}
 					else {
-						//Console.WriteLine("{0} Read {1}:{2}",i+1,constantPool[i].getName(),constantPool[i].ToString());
+						//if (log.IsDebugEnabled) log.DebugFormat("{0} Read {1}:{2}",i+1,constantPool[i].getName(),constantPool[i].ToString());
 					}
 				}
 		
@@ -123,7 +124,7 @@ namespace ToyVM
 				for (int i = 0; i < constantPool.Length; i++)
 				{
 					constantPool[i].resolve(constantPool);
-					//Console.WriteLine("{0} Read {1}:{2}",i+1,constantPool[i].getName(),constantPool[i].ToString());
+					//if (log.IsDebugEnabled) log.DebugFormat("{0} Read {1}:{2}",i+1,constantPool[i].getName(),constantPool[i].ToString());
 				}
 
 				accessFlags = reader.ReadUInt16();
@@ -131,18 +132,18 @@ namespace ToyVM
 				UInt16 thisClassIndex = reader.ReadUInt16();
 				thisClass = (ConstantPoolInfo_Class)constantPool[thisClassIndex - 1];
 
-				Console.WriteLine("This class: {0}",constantPool[thisClass.getNameIndex()-1]);
+				if (log.IsDebugEnabled) log.DebugFormat("This class: {0}",constantPool[thisClass.getNameIndex()-1]);
 
 				UInt16 superClassIndex = reader.ReadUInt16();
 				if (superClassIndex != 0){
 					superClass = (ConstantPoolInfo_Class)constantPool[superClassIndex - 1];
-					Console.WriteLine("Super class: {0}",constantPool[superClass.getNameIndex()-1]);
+					if (log.IsDebugEnabled) log.DebugFormat("Super class: {0}",constantPool[superClass.getNameIndex()-1]);
 				}
 				else if (! thisClass.getClassName().Equals("java/lang/Object")){
 					throw new Exception("Only Object can have no superclasses");
 				}
 				interfaceCount = reader.ReadUInt16();
-				Console.WriteLine("{0} interfaces",interfaceCount);
+				if (log.IsDebugEnabled) log.DebugFormat("{0} interfaces",interfaceCount);
 
 				if (interfaceCount > 0)
 				{
@@ -155,7 +156,7 @@ namespace ToyVM
 				}
 
 				fieldCount = reader.ReadUInt16();
-				Console.WriteLine("{0} fields",fieldCount);
+				if (log.IsDebugEnabled) log.DebugFormat("{0} fields",fieldCount);
 
 				if (fieldCount > 0){
 					fields = new FieldInfo[fieldCount];
@@ -170,7 +171,7 @@ namespace ToyVM
 				}
 				
 				methodCount = reader.ReadUInt16();
-				Console.WriteLine("{0} methods",methodCount);
+				if (log.IsDebugEnabled) log.DebugFormat("{0} methods",methodCount);
 				if (methodCount > 0)
 				{
 					methods = new MethodInfo[methodCount];
@@ -179,21 +180,21 @@ namespace ToyVM
 					{
 						methods[i] = new MethodInfo(reader,constantPool);
 						//methods[i].resolve(constantPool);
-						//Console.WriteLine("Method: {0}",methods[i]);
-						//Console.WriteLine("Storing under {0}",methods[i].getMethodName()+methods[i].getDescriptor());
+						//if (log.IsDebugEnabled) log.DebugFormat("Method: {0}",methods[i]);
+						//if (log.IsDebugEnabled) log.DebugFormat("Storing under {0}",methods[i].getMethodName()+methods[i].getDescriptor());
 						methodsByName[methods[i].getMethodName()+methods[i].getDescriptor()] = methods[i];
 						methods[i].SetClassFile(this);
 					}
 				}
 
 				attributeCount = reader.ReadUInt16();
-				Console.WriteLine("{0} attributes",attributeCount);
+				if (log.IsDebugEnabled) log.DebugFormat("{0} attributes",attributeCount);
 				attributes = new AttributeInfo[attributeCount];
 				for (int i = 0; i < attributeCount; i++)
 				{
 					attributes[i] = AttributeInfo.readAttributeInfo(reader,constantPool);
 					
-					Console.WriteLine(attributes[i]);
+					if (log.IsDebugEnabled) log.DebugFormat(attributes[i].ToString());
 				}
 
 			
@@ -206,7 +207,7 @@ namespace ToyVM
 			if (method != null){
 				//frame.setMethod(this,method);
 				if (! method.isNative()){
-					Console.WriteLine("**** START {0}.{1}{2} ****",this.GetName(),methodName,descriptor);
+					if (log.IsDebugEnabled) log.DebugFormat("**** START {0}.{1}{2} ****",this.GetName(),methodName,descriptor);
 					try {
 						method.execute(frame);
 					}
@@ -214,7 +215,7 @@ namespace ToyVM
 					catch (Exception e) {
 						throw new ToyVMException("Unable to execute",e,frame);
 					}
-					Console.WriteLine("**** END {0}.{1}{2} ****",this.GetName(),methodName,descriptor);
+					if (log.IsDebugEnabled) log.DebugFormat("**** END {0}.{1}{2} ****",this.GetName(),methodName,descriptor);
 				}
 				else {
 					if (! handleNative(method,frame)) 
@@ -240,15 +241,15 @@ namespace ToyVM
 			if (info == null){ // look for super-class version
 				
 				if (superClassFile != null){
-					Console.WriteLine("Searching for {0} in superclass {1}",methodName,superClassFile.GetName());
+					if (log.IsDebugEnabled) log.DebugFormat("Searching for {0} in superclass {1}",methodName,superClassFile.GetName());
 					return superClassFile.getMethod(methodName,descriptor);
 				}
 				else {
-					Console.WriteLine("Could not find {0} and have no superclass",methodName);
+					if (log.IsDebugEnabled) log.DebugFormat("Could not find {0} and have no superclass",methodName);
 				}
 			}
 			else {
-				Console.WriteLine("Found {0} in {1}",methodName,thisClass.getClassName());
+				if (log.IsDebugEnabled) log.DebugFormat("Found {0} in {1}",methodName,thisClass.getClassName());
 			}
 			return info;
 			
@@ -318,7 +319,7 @@ namespace ToyVM
 		
 		public void SetSuperClassFile(ClassFile superClassFile){
 			this.superClassFile = superClassFile;
-			Console.WriteLine(GetName() + ": Set super class instance " + superClassFile);
+			if (log.IsDebugEnabled) log.DebugFormat(GetName() + ": Set super class instance " + superClassFile);
 		}
 		
 		public ClassFile GetSuperClassFile(){
@@ -362,7 +363,7 @@ namespace ToyVM
 			else if (this.GetName().StartsWith("gnu/java")){
 				if (this.GetName().Equals("gnu/java/nio/VMChannel")){
 					if (method.getMethodName().Equals("initIDs")){
-						Console.WriteLine("DOING NOTHING FOR initIDs");
+						if (log.IsDebugEnabled) log.DebugFormat("DOING NOTHING FOR initIDs");
 						/*unsafe {
 						
 							void * jniEnv = null;
@@ -373,7 +374,7 @@ namespace ToyVM
 						return true;
 					}
 					if (method.getMethodName().Equals("stdin_fd")){
-						Console.WriteLine("RETURNING 1 FOR stdin_fd");
+						if (log.IsDebugEnabled) log.DebugFormat("RETURNING 1 FOR stdin_fd");
 						/*unsafe {
 						
 							void * jniEnv = null;
