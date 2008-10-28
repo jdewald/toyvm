@@ -67,7 +67,7 @@ namespace ToyVM
 
 		private UInt32 Swap32(UInt32 original)
 		{
-			//Console.WriteLine("Original: {0}/{0:X}",original);
+			//if (log.IsDebugEnabled) log.DebugFormat("Original: {0}/{0:X}",original);
 			UInt16 firstWord = (UInt16)(original & 0xFFFF);
 			UInt16 secondWord = (UInt16)((original & 0xFFFF0000) >> 16);
 

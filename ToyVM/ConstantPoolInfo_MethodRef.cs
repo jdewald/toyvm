@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using log4net;
 namespace ToyVM
 {
 	/// <summary>
@@ -7,6 +8,7 @@ namespace ToyVM
 	/// </summary>
 	public class ConstantPoolInfo_MethodRef : ConstantPoolInfo
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ConstantPoolInfo_MethodRef));
 		UInt16 classIndex; // will reference another entry in the pool
 		UInt16 nameAndTypeIndex; // will reference another entry in the pool
 
@@ -68,7 +70,7 @@ namespace ToyVM
 		}
 		
 		protected void deriveParameterCount(){
-			//Console.WriteLine("Descriptor: {0}",nameAndType.getDescriptor());
+			//if (log.IsDebugEnabled) log.DebugFormat("Descriptor: {0}",nameAndType.getDescriptor());
 			// first break into parameters and return
 			
 			Match paramAndReturn = paramAndReturnRegex.Match(nameAndType.getDescriptor());
@@ -78,12 +80,10 @@ namespace ToyVM
 			string paramString = paramAndReturn.Groups[1].ToString();
 			                                         
 			
-			//Console.WriteLine("Parameters: {0}",paramString);
+			//if (log.IsDebugEnabled) log.DebugFormat("Parameters: {0}",paramString);
 			MatchCollection matches = paramRegex.Matches(paramString);
 			
-			foreach (Match match in matches){
-				//Console.WriteLine("Match {0}",match);
-			}
+		
 			
 			parameterCount = matches.Count;
 		

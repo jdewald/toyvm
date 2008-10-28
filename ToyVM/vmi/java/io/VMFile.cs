@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using log4net;
 /**
  * VMFile, note that this "should" be coming through from libjavaio.so
  */
@@ -16,6 +17,7 @@ namespace ToyVM
 	public class VMFile
 	{
 		
+		static readonly ILog log = LogManager.GetLogger(typeof(VMFile));
 		public VMFile()
 		{
 
@@ -36,7 +38,7 @@ namespace ToyVM
 			
 			string filename = new string(filenameChars);
 			
-			Console.WriteLine("Determining if {0} is a directory or not",filename);
+			if (log.IsDebugEnabled) log.DebugFormat("Determining if {0} is a directory or not",filename);
 			
 			FileInfo file = new FileInfo(filename);
 			
@@ -55,7 +57,7 @@ namespace ToyVM
 			
 			string filename = new string(filenameChars);
 			
-			Console.WriteLine("Determining if {0} is a file or not",filename);
+			if (log.IsDebugEnabled) log.DebugFormat("Determining if {0} is a file or not",filename);
 			
 			FileInfo file = new FileInfo(filename);
 			

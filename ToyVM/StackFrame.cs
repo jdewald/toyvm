@@ -6,13 +6,14 @@
 
 using System;
 using System.Collections;
+using log4net;
 namespace ToyVM
 {
 	
 	
 	public class StackFrame
 	{
-		
+		static readonly ILog log = LogManager.GetLogger(typeof(StackFrame));
 		Stack operands = new Stack();
 		ConstantPoolInfo[] constantPool;
 		StackFrame prev;
@@ -87,9 +88,9 @@ namespace ToyVM
 		public void pushOperand(Object operand){
 			operands.Push(operand);
 			if (operand is string && containsUnicode((string) operand)){
-				Console.WriteLine("Popped <UNICODE>");
+				if (log.IsDebugEnabled) log.DebugFormat("Popped <UNICODE>");
 			}
-			else Console.WriteLine("Pushed {0}",operand);
+			else if (log.IsDebugEnabled) log.DebugFormat("Pushed {0}",operand);
 			
 		}
 		
@@ -100,20 +101,22 @@ namespace ToyVM
 			Object popped = operands.Pop();
 			
 			if (popped is string && containsUnicode((string) popped)){
-				Console.WriteLine("Popped <UNICODE>");
+				if (log.IsDebugEnabled) log.DebugFormat("Popped <UNICODE>");
 			}
 			else if (popped is System.Char[]){
-				Console.Write("Popped ");
+				string printableChars = "";
 				char[] chars = (char[]) popped;
+				//stringRef.isUnicode = true; // I suck
+				
 				for (int i = 0; i < chars.Length; i++){
-					if (chars[i] > 13 && chars[i] < 128){
-						Console.Write(chars[i]);
+					if (chars[i] > 13 && chars[i] < 127){
+						printableChars += chars[i];
 					}
 				}
-				Console.WriteLine("");
+				if (log.IsDebugEnabled) log.DebugFormat("Popped {0}",printableChars);
 			}
 			else {
-				Console.WriteLine("Popped {0}",popped);
+				if (log.IsDebugEnabled) log.DebugFormat("Popped {0}",popped);
 			}
 			return popped;
 		}

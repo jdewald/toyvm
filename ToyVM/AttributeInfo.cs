@@ -9,8 +9,8 @@ namespace ToyVM
 	{
 		
 		protected UInt32 length;
+		
 		byte[] info;
-
 		// Resolved later
 		ConstantPoolInfo_UTF8 name;
 
@@ -25,11 +25,11 @@ namespace ToyVM
 		{
 			int nameIdx = reader.ReadUInt16();
 
-			//Console.WriteLine("Read Index {0}/{0:X}",nameIdx);
+			//if (log.IsDebugEnabled) log.DebugFormat("Read Index {0}/{0:X}",nameIdx);
 			if (pool[nameIdx - 1] is ConstantPoolInfo_UTF8){
 				ConstantPoolInfo_UTF8 utf8Name = (ConstantPoolInfo_UTF8)pool[nameIdx - 1];
 			
-				//Console.WriteLine("Attribute name: {0}",utf8Name);
+				//if (log.IsDebugEnabled) log.DebugFormat("Attribute name: {0}",utf8Name);
 				
 				String attrName = utf8Name.getUTF8String();
 				if (attrName.Equals("Code"))

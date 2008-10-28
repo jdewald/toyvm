@@ -30,7 +30,7 @@ namespace ToyVM
 			accessFlags = reader.ReadUInt16();
 			nameIndex = reader.ReadUInt16();
 			descriptorIndex = reader.ReadUInt16();
-			//Console.WriteLine("Name should be {0}",pool[nameIndex-1]);
+			//if (log.IsDebugEnabled) log.DebugFormat("Name should be {0}",pool[nameIndex-1]);
 			name = (ConstantPoolInfo_UTF8)pool[nameIndex - 1];
 			descriptor = (ConstantPoolInfo_UTF8)pool[descriptorIndex - 1];
 			

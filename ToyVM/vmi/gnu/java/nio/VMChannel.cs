@@ -5,14 +5,14 @@
 //
 
 using System;
-
+using log4net;
 namespace ToyVM
 {
 	
 	
 	public class VMChannel
 	{
-		
+		static readonly ILog log = LogManager.GetLogger(typeof(VMChannel));
 		public VMChannel()
 		{
 		}
@@ -50,7 +50,7 @@ namespace ToyVM
 			
 			if (method == null){
 				foreach (MethodInfo m in byteBufferClass.getMethods()){
-					Console.WriteLine(m);
+					if (log.IsDebugEnabled) log.DebugFormat(m.ToString());
 				}
 				throw new ToyVMException("Unable to find " + getterName + getterType,frame);
 			}

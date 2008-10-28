@@ -5,14 +5,15 @@
 //
 
 using System;
-
+using log4net;
 namespace ToyVM
 {
 	
 	
 	public class VMSystemProperties
 	{
-		
+
+		static readonly ILog log = LogManager.GetLogger(typeof(VMSystemProperties));
 		public VMSystemProperties()
 		{
 		}
@@ -31,7 +32,7 @@ namespace ToyVM
 			
 			if (method == null){
 				foreach (MethodInfo m in propsClass.getMethods()){
-					Console.WriteLine(m);
+					if (log.IsDebugEnabled) log.DebugFormat(m.ToString());
 				}
 				throw new ToyVMException("Unable to find " + setterName + setterType,sf);
 			}

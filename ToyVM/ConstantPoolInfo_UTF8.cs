@@ -22,7 +22,7 @@ namespace ToyVM
 		public override void parse(MSBBinaryReaderWrapper reader)
 		{
 			length = reader.ReadUInt16();
-			int charPosition = 0;
+			
 			chars = "";
 			ArrayList codePointArr = new ArrayList();
 			byte[] originalChars = reader.getReader().ReadBytes(length);

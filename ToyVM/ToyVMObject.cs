@@ -6,13 +6,14 @@
 
 using System;
 using System.Collections;
-
+using log4net;
 namespace ToyVM
 {
 	
 	
 	public class ToyVMObject
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ToyVMObject));
 		public readonly int TYPE_PRIMITIVE = 0;
 		public readonly int TYPE_REFERENCE = 1;
 
@@ -29,7 +30,7 @@ namespace ToyVM
 			this.type = type;
 			
 			//if (type is ConstantPoolInfo_Class){
-				Console.WriteLine("Pretending to create new instance of {0}",type.GetName());
+				if (log.IsDebugEnabled) log.DebugFormat("Pretending to create new instance of {0}",type.GetName());
 			//}
 			//else {
 				//throw new Exception("Don't know how to handle " + type.getName());
@@ -44,7 +45,7 @@ namespace ToyVM
 		
 		public void monitorExit(){
 			refCount--;
-			Console.WriteLine("New refCount: {0}",refCount);
+			if (log.IsDebugEnabled) log.DebugFormat("New refCount: {0}",refCount);
 		}
 		
 		public void setHeapReference(Heap.HeapReference reference){
@@ -80,16 +81,16 @@ namespace ToyVM
 				}
 				}		
 			}
-			Console.WriteLine("GET{0}:{1} = {2}",this.heapRef,fieldName,fieldValues[fieldName]);
+			if (log.IsDebugEnabled) log.DebugFormat("GET{0}:{1} = {2}",this.heapRef,fieldName,fieldValues[fieldName]);
 			return fieldValues[fieldName];
 		}
 		
 		public void setFieldValue(ConstantPoolInfo_FieldRef field,Object val){
-			Console.WriteLine("SET{0}:{1} = {2}",this.heapRef,field,val);
+			if (log.IsDebugEnabled) log.DebugFormat("SET{0}:{1} = {2}",this.heapRef,field,val);
 			fieldValues[field.getNameAndType().getRefName()] = val;
 		}
 		
-		public string ToString(){
+		public override string ToString(){
 			return heapRef.ToString();
 		}
 		

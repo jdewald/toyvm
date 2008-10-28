@@ -41,14 +41,14 @@ namespace ToyVM
 			{
 				ByteCode bc = ByteCodeFactory.readByteCode(reader,pool,readLength);
 				//code.Add(bc);
-				//Console.WriteLine("{0}: {1}",readLength,bc);
+				//if (log.IsDebugEnabled) log.DebugFormat("{0}: {1}",readLength,bc);
 				code.Add(readLength,bc);
 				readLength += bc.getSize();
 			}
 
 			exceptionTableLength = reader.ReadUInt16();
 
-			//Console.WriteLine("Exception table length: {0}",exceptionTableLength);
+			//if (log.IsDebugEnabled) log.DebugFormat("Exception table length: {0}",exceptionTableLength);
 			
 			exceptions = new ExceptionTableEntry[exceptionTableLength];
 			
@@ -59,7 +59,7 @@ namespace ToyVM
 			attributeCount = reader.ReadUInt16();
 		
 			
-			//Console.WriteLine("Have {0} code attributes",attributeCount);
+			//if (log.IsDebugEnabled) log.DebugFormat("Have {0} code attributes",attributeCount);
 			attributes = new AttributeInfo[attributeCount];
 
 			for (int i = 0; i < attributeCount; i++)

@@ -24,13 +24,13 @@ namespace ToyVM
 		public override void parse(MSBBinaryReaderWrapper reader, ConstantPoolInfo[] pool)
 		{
 			UInt16 count = reader.ReadUInt16();
-			//Console.WriteLine("Will read in {0} line number mappings",count);
+			//if (log.IsDebugEnabled) log.DebugFormat("Will read in {0} line number mappings",count);
 			for (int i = 0; i < count; i++){
 				UInt16 position = reader.ReadUInt16();
 				UInt16 lineNumber = reader.ReadUInt16();
 			
 				lineNumberTable.Add(position,lineNumber);
-				//Console.WriteLine("{0}->{1}",position,lineNumber);
+				//if (log.IsDebugEnabled) log.DebugFormat("{0}->{1}",position,lineNumber);
 			}
 		}
 		

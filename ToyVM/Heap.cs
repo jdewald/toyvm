@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Threading;
+using log4net;
 namespace ToyVM
 {
 
@@ -16,6 +17,7 @@ namespace ToyVM
 	// actually only be a single heap!
 	public class Heap
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(Heap));
 		static Heap instance;
 		
 		int count;
@@ -75,17 +77,19 @@ namespace ToyVM
 				stringFrame.getLocalVariables()[0] = stringRef;
 				stringFrame.getLocalVariables()[1] = stringConst;
 			
-				Console.Write("Stringval1:");
+				string printableChars = "";
+				
 				//stringRef.isUnicode = true; // I suck
 				char[] chars = stringVal.ToCharArray();
 				for (int i = 0; i < chars.Length; i++){
 					if (chars[i] > 13 && chars[i] < 127){
-						Console.Write(chars[i]);
+						printableChars += chars[i];
 					}
 				}
-				Console.WriteLine("");
-				//Console.WriteLine(stringVal);
-			//	Console.WriteLine("U:" + stringRef.isUnicode);
+				
+				if (log.IsDebugEnabled) log.DebugFormat("stringval1:{0}",printableChars);
+				//if (log.IsDebugEnabled) log.DebugFormat(stringVal);
+			//	if (log.IsDebugEnabled) log.DebugFormat("U:" + stringRef.isUnicode);
 				stringType.execute("<init>","([C)V",stringFrame);
 				stringMap.Add(stringVal,stringRef);
 				reverseStringMap.Add(stringRef,stringVal);
@@ -111,13 +115,18 @@ namespace ToyVM
 				stringFrame.getLocalVariables()[1] = stringVal;
 			//	stringRef.isUnicode = containsUnicode(stringVal);
 				char[] chars = stringVal.ToCharArray();
-				Console.Write("StringVal2:");
+					string printableChars = "";
+				
+				//stringRef.isUnicode = true; // I suck
+				
 				for (int i = 0; i < chars.Length; i++){
 					if (chars[i] > 13 && chars[i] < 127){
-						Console.Write(chars[i]);
+						printableChars += chars[i];
 					}
 				}
-				Console.WriteLine("");
+				
+				
+				if (log.IsDebugEnabled) log.DebugFormat("stringval2:{0}",printableChars);
 				
 			 	stringType.execute("<init>","([C)V",stringFrame);
 				stringMap.Add(stringVal,stringRef);
@@ -183,7 +192,7 @@ namespace ToyVM
 		}
 		
 		public HeapReference newPrimitiveArray(Type type, int length){
-			Console.WriteLine("Creatring new Primitive Array of type {0}",type);
+			if (log.IsDebugEnabled) log.DebugFormat("Creatring new Primitive Array of type {0}",type);
 			int addr = theHeap.Count;
 			HeapReference href = new HeapReference();
 			Array arr = Array.CreateInstance(type,length);

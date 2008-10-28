@@ -5,14 +5,14 @@
 //
 
 using System;
-
+using log4net;
 namespace ToyVM
 {
 	
 	
 	public class VMClassLoader
 	{
-		
+		static readonly ILog log = LogManager.GetLogger(typeof(VMClassLoader));
 		public VMClassLoader()
 		{
 		}
@@ -23,7 +23,7 @@ namespace ToyVM
 		public static void getPrimitiveClass(StackFrame frame){
 			char typeChar = (char)((int)(frame.getLocalVariables())[0]);
 			
-			Console.WriteLine("Returning class for {0}",typeChar);
+			if (log.IsDebugEnabled) log.DebugFormat("Returning class for {0}",typeChar);
 			
 			switch (typeChar){
 			case 'I':{
