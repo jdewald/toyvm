@@ -3,15 +3,23 @@ using System;
 
 using System.IO;
 using System.Collections;
+using log4net;
+
 
 namespace ToyVM
 {
 	/// <summary>
 	/// Summary description for ToyVMClassLoader.
 	/// </summary>
+	public delegate void ClassLoaderClassLoadEvent(string className);
+
+	
 	public class ToyVMClassLoader 
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ToyVMClassLoader));
 		static Hashtable classCache = new Hashtable();
+		
+		public static event ClassLoaderClassLoadEvent ClassLoadedEvent;
 		
 		public ToyVMClassLoader()
 		{
@@ -29,10 +37,11 @@ namespace ToyVM
 			//	try {
 				string classFileName = className + ".class";
 				string path = classFileName;
-				Console.WriteLine("Trying {0}",path);
+				
+				if (log.IsDebugEnabled) log.Debug(String.Format("Trying {0}",path));
 				if (!File.Exists(path)){
 					path = "openjdk/" + path;
-					Console.WriteLine("Trying {0}",path);
+					if (log.IsDebugEnabled) log.DebugFormat("Trying {0}",path);
 				}
 				BinaryReader reader = new BinaryReader(File.OpenRead(path),System.Text.Encoding.UTF8);
 
@@ -61,6 +70,10 @@ namespace ToyVM
 			//			throw new ToyVMException("Error",e,frame);
 			//		}
 			//	}
+				
+				if (ClassLoadedEvent != null){
+					ClassLoadedEvent(className);
+				}
 			}
 			
 			return (ClassFile) classCache[className];
@@ -69,11 +82,11 @@ namespace ToyVM
 
 		protected static bool doInitialize(ClassFile theClass,StackFrame frame){
 			if (! theClass.isInitialized()){
-				Console.WriteLine("Initializing {0}",theClass);
+				if (log.IsDebugEnabled) log.Debug(String.Format("Initializing {0}",theClass));
 				string superClassName = theClass.GetSuperClassName();
 
 				if (superClassName != null) { // got to the top
-					Console.WriteLine("Need to initialize {0}",superClassName);
+					if (log.IsDebugEnabled) log.Debug(String.Format("Need to initialize {0}",superClassName));
 					ClassFile superClass = (ClassFile) classCache[superClassName];
 					
 					if (! doInitialize(superClass,frame)){
@@ -82,12 +95,12 @@ namespace ToyVM
 				}
 
 				// TODO: According to the spec, this should be in "textual order"
-				Console.WriteLine("Executing static initializer");
+				if (log.IsDebugEnabled) log.DebugFormat("Executing static initializer");
 				
 				theClass.staticInitialize(frame);
 				
 				// now we can initialize the original class
-				Console.WriteLine("Loading fields...");
+				if (log.IsDebugEnabled) log.DebugFormat("Loading fields...");
 				FieldInfo[] fields = theClass.getFields();
 				
 				
@@ -97,7 +110,7 @@ namespace ToyVM
 						throw new Exception("FIeld is null?");
 					}
 					if (field.isStatic()){
-						Console.WriteLine("Static initializing {0}",field);
+						if (log.IsDebugEnabled) log.DebugFormat("Static initializing {0}",field);
 							
 						
 					}
