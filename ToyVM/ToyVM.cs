@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Collections;
-
+using log4net;
+using ToyVM.handlers;
+[assembly: log4net.Config.XmlConfigurator(ConfigFile="/home/jdewald/ToyVM/log4net.config",Watch=true)]
 namespace ToyVM
 {
 	/// <summary>
@@ -10,20 +12,29 @@ namespace ToyVM
 	class ToyVM
 	{
 		
+		static readonly ILog log = LogManager.GetLogger(typeof(ToyVM));	
+
 		public void start(string className)
 		{
 			try 
 			{
+				EventLogger logger = new EventLogger("/home/jdewald/ToyVMEvents.log");
+				CountingHandler counter = new CountingHandler("/home/jdewald/ToyVMCounter");
+				
+				ToyVMClassLoader.ClassLoadedEvent += logger.handleClassLoaded;
+				MethodInfo.EnterEvent += counter.HandleMethodInfoEnterEvent;
+				MethodInfo.ByteCodeEnterEvent += counter.HandleByteCodeEnterEvent;
+				
 				ClassFile mainClass = ToyVMClassLoader.loadClass(className);
-				Console.WriteLine("Loaded");
-				Console.WriteLine(mainClass.GetName() + " was loaded");
+				if (log.IsDebugEnabled) log.DebugFormat("Loaded");
+				if (log.IsDebugEnabled) log.DebugFormat(mainClass.GetName() + " was loaded");
 				//classCache[mainClass.GetName()] = mainClass;
 
-				Console.WriteLine(mainClass.GetName() + " stored in cache");
+				if (log.IsDebugEnabled) log.DebugFormat(mainClass.GetName() + " stored in cache");
 				// initialize from the root of the class tree
 				string superClassName = mainClass.GetSuperClassName();
 	
-				Console.WriteLine("Super class is {0}",superClassName);
+				if (log.IsDebugEnabled) log.DebugFormat("Super class is {0}",superClassName);
 				ClassFile superClass = ToyVMClassLoader.loadClass(superClassName);
 				if (superClass == null)
 				{
@@ -47,6 +58,8 @@ namespace ToyVM
 					info.execute(frame);
 				}
 				*/
+				counter.Complete();
+				
 			}
 			catch (ToyVMException te){
 				if (te.InnerException == null){
@@ -61,6 +74,7 @@ namespace ToyVM
 				Console.WriteLine(e.Message + ":" + e.StackTrace);
 				//throw e;
 			}
+			
 		}
 	
 		
