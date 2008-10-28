@@ -29,7 +29,7 @@ namespace ToyVM.bytecodes
 		public override void execute (StackFrame frame)
 		{
 			int old = (int)frame.getLocalVariables()[index];
-			Console.WriteLine("old:{0},new:{1}",old,(old + constant));
+			
 			frame.getLocalVariables()[index] = old + constant;
 		}
 

@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_iload : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_iload));
 		int index; // which thing are we loading
 		
 		public ByteCode_iload(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
@@ -34,7 +35,7 @@ namespace ToyVM.bytecodes
 			}
 			catch (InvalidCastException e){
 				foreach (Object o in frame.getLocalVariables()){
-					Console.WriteLine("Var:{0}",o);
+					if (log.IsDebugEnabled) log.DebugFormat("Var:{0}",o);
 				}
 				throw new ToyVMException("Wanted int at " + index + " but got " + frame.getLocalVariables()[index],e,frame);
 			}

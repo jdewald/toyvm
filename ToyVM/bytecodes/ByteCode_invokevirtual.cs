@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -9,6 +9,7 @@ namespace ToyVM.bytecodes
 	public class ByteCode_invokevirtual : ByteCode
 	{
 		ConstantPoolInfo_MethodRef method;
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_invokevirtual));
 		public ByteCode_invokevirtual(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
 			name = "invokevirtual";
@@ -31,7 +32,7 @@ namespace ToyVM.bytecodes
 		public override void execute (StackFrame frame)
 		{
 			ConstantPoolInfo_NameAndType nameAndType = method.GetMethodNameAndType();
-			Console.WriteLine("Will be executing {0} on class {1}",nameAndType,method.GetClassInfo().getClassName());
+			if (log.IsDebugEnabled) log.DebugFormat("Will be executing {0} on class {1}",nameAndType,method.GetClassInfo().getClassName());
 			
 			int paramCount = method.getParameterCount();
 			
@@ -45,7 +46,7 @@ namespace ToyVM.bytecodes
 			// on the stack
 			for (int i = paramCount; i >= 0; i--){
 				locals[i] = frame.popOperand();
-				Console.WriteLine("Parameter {0} is {1}",i,locals[i]);
+				if (log.IsDebugEnabled) log.DebugFormat("Parameter {0} is {1}",i,locals[i]);
 			}
 			
 			ClassFile clazz = null;
@@ -61,7 +62,7 @@ namespace ToyVM.bytecodes
 			
 			frame2.setMethod(clazz,clazz.getMethod(nameAndType));
 			
-			Console.WriteLine("Have {0} parameters",paramCount);
+			if (log.IsDebugEnabled) log.DebugFormat("Have {0} parameters",paramCount);
 		
 			
 			for (int i = 0;i <= paramCount; i++){
@@ -75,12 +76,12 @@ namespace ToyVM.bytecodes
 			ClassFile clazz = ToyVMClassLoader.loadClass(method.GetClassInfo().getClassName());
 			
 			ConstantPoolInfo_NameAndType nameAndType = method.GetMethodNameAndType();
-			Console.WriteLine("Will be executing {0} on {1}",nameAndType,clazz.GetName());
+			if (log.IsDebugEnabled) log.DebugFormat("Will be executing {0} on {1}",nameAndType,clazz.GetName());
 			
 			StackFrame frame2 = new StackFrame(frame);
 			frame2.setMethod(clazz,clazz.getMethod(nameAndType));
 			int paramCount = method.getParameterCount();
-			Console.WriteLine("Have {0} parameters",paramCount);
+			if (log.IsDebugEnabled) log.DebugFormat("Have {0} parameters",paramCount);
 			// push "this" as local variable 0
 			
 			
@@ -88,7 +89,7 @@ namespace ToyVM.bytecodes
 			// into the local variables of the outgoing frame
 			for (int i = paramCount;i >= 0; i--){
 				frame2.getLocalVariables()[i]=frame.popOperand();
-				Console.WriteLine("Set variable {0}={1}",(i),frame2.getLocalVariables()[i]);
+				if (log.IsDebugEnabled) log.DebugFormat("Set variable {0}={1}",(i),frame2.getLocalVariables()[i]);
 			}
 			//frame2.getLocalVariables().Insert(0,frame.popOperand());
 			

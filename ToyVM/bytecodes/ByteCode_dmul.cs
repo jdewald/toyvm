@@ -20,8 +20,8 @@ namespace ToyVM.bytecodes
 			double val2 = Double.Parse(frame.popOperand().ToString());
 
 			
-			Console.WriteLine("val1 is {0}",val1.GetType());
-			Console.WriteLine("val2 is {0}",val2.GetType());
+			//if (log.IsDebugEnabled) log.DebugFormat("val1 is {0}",val1.GetType());
+			//if (log.IsDebugEnabled) log.DebugFormat("val2 is {0}",val2.GetType());
 			
 			
 			frame.pushOperand(val1 * val2);

@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_putstatic : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_putstatic));
 		ConstantPoolInfo_FieldRef field;
 		public ByteCode_putstatic(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
@@ -24,15 +25,15 @@ namespace ToyVM.bytecodes
 
 		//..., value  ...
 		public override void execute(StackFrame frame){
-			Console.WriteLine("Executing " + this);
+			if (log.IsDebugEnabled) log.DebugFormat("Executing " + this);
 			ConstantPoolInfo_Class theClass = field.getTheClass();
-			Console.WriteLine("Field class is {0}",theClass);
+			if (log.IsDebugEnabled) log.DebugFormat("Field class is {0}",theClass);
 			
 			
 			ClassFile fieldClass = ToyVMClassLoader.loadClass(theClass.getClassName());
 			fieldClass.setStaticFieldValue(field.getNameAndType().getRefName(),frame.popOperand());
 			
-			Console.WriteLine("Static field {0} now has value {1}",field,fieldClass.getStaticFieldValue(field.getNameAndType().getRefName()));
+			if (log.IsDebugEnabled) log.DebugFormat("Static field {0} now has value {1}",field,fieldClass.getStaticFieldValue(field.getNameAndType().getRefName()));
 		}
 	}
 }

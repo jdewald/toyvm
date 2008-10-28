@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -9,6 +9,7 @@ namespace ToyVM.bytecodes
 	{
 		ConstantPoolInfo reference;
 
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_ldc2_w));
 		public ByteCode_ldc2_w(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
 			name = "ldc2_w";
@@ -16,7 +17,7 @@ namespace ToyVM.bytecodes
 
 			UInt16 index = reader.ReadUInt16();
 
-			Console.WriteLine("Index is {0}",index);
+//			if (log.IsDebugEnabled) log.DebugFormat("Index is {0}",index);
 			reference = pool[index - 1];
 		}
 

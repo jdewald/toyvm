@@ -20,8 +20,8 @@ namespace ToyVM.bytecodes
 			float val2 = Single.Parse(frame.popOperand().ToString());
 
 			
-			Console.WriteLine("val1 is {0}",val1.GetType());
-			Console.WriteLine("val2 is {0}",val2.GetType());
+			//if (log.IsDebugEnabled) log.DebugFormat("val1 is {0}",val1.GetType());
+			//if (log.IsDebugEnabled) log.DebugFormat("val2 is {0}",val2.GetType());
 			
 			
 			frame.pushOperand((float)val1 * (float)val2);

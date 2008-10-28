@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_new : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_new));
 		// can acctually be Array,Class or Interface
 		ConstantPoolInfo_Class classRef;
 		
@@ -30,7 +31,7 @@ namespace ToyVM.bytecodes
 			//ToyVMObject obj = new ToyVMObject(classRef);
 			Heap.HeapReference heapRef = Heap.GetInstance().newInstance(ToyVMClassLoader.loadClass(classRef.getClassName()));
 			
-			Console.WriteLine("executing new from {0}",frame);
+			if (log.IsDebugEnabled) log.DebugFormat("executing new from {0}",frame);
 			frame.pushOperand(heapRef);
 		}
 

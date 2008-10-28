@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_tableswitch: ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_tableswitch));
 		int defaultBranch;
 		int low;
 		int high;
@@ -29,20 +30,20 @@ namespace ToyVM.bytecodes
 			}
 			size += padCount;
 			
-			Console.WriteLine("Read {0} pad characters, offset = {1}",padCount,offset);
+			//if (log.IsDebugEnabled) log.DebugFormat("Read {0} pad characters, offset = {1}",padCount,offset);
 			
 			defaultBranch = (int)reader.ReadUInt32();
-			Console.WriteLine("Default: {0}/{0:X}",defaultBranch);
+			//if (log.IsDebugEnabled) log.DebugFormat("Default: {0}/{0:X}",defaultBranch);
 			low = (int)reader.ReadUInt32(); 
 			high = (int)reader.ReadUInt32();
-			Console.WriteLine("{0} offsets ({1}/{1:X},{2}/{2:X})",high - low + 1,high,low);
+			//if (log.IsDebugEnabled) log.DebugFormat("{0} offsets ({1}/{1:X},{2}/{2:X})",high - low + 1,high,low);
 			size += 12;
 			int offsetCount = (int)(high - low + 1);
 			offsets = new int[offsetCount];
 			
 			for (int i = 0; i < offsetCount; i++){
 				offsets[i] = (int) reader.ReadUInt32();
-				Console.WriteLine("Offset: {0}",offsets[i]);
+				if (log.IsDebugEnabled) log.DebugFormat("Offset: {0}",offsets[i]);
 				size += 4;
 			}
 		}

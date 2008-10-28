@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_invokestatic : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_invokestatic));
 		ConstantPoolInfo_MethodRef method;
 		public ByteCode_invokestatic(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
@@ -26,7 +27,7 @@ namespace ToyVM.bytecodes
 			ClassFile clazz = ToyVMClassLoader.loadClass(method.GetClassInfo().getClassName());
 			
 			ConstantPoolInfo_NameAndType nameAndType = method.GetMethodNameAndType();
-			Console.WriteLine("Will be executing {0} on {1}",nameAndType,clazz.GetName());
+			if (log.IsDebugEnabled) log.DebugFormat("Will be executing {0} on {1}",nameAndType,clazz.GetName());
 			MethodInfo methodInfo = clazz.getMethod(nameAndType);
 			// TODO: Need better way of handling access to the method
 			if (methodInfo == null){
@@ -39,12 +40,12 @@ namespace ToyVM.bytecodes
 			
 		
 			
-			Console.WriteLine("Have {0} parameters",paramCount);
+			if (log.IsDebugEnabled) log.DebugFormat("Have {0} parameters",paramCount);
 			// Store the parameters from the operand stack
 			// into the local variables of the outgoing frame
 			for (int i = paramCount; i > 0; i--){
 				frame2.getLocalVariables()[i-1]=frame.popOperand();
-				Console.WriteLine("Parameter {0} = {1}",i,frame2.getLocalVariables()[i-1]);
+				if (log.IsDebugEnabled) log.DebugFormat("Parameter {0} = {1}",i,frame2.getLocalVariables()[i-1]);
 			}
 			clazz.execute(nameAndType,frame2);
 			/*methodInfo.execute(frame2);

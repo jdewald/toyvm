@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -8,7 +8,8 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_aastore : ByteCode
 	{
-		
+
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_aastore));
 		public ByteCode_aastore(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
 			name = "aastore";
@@ -41,7 +42,7 @@ namespace ToyVM.bytecodes
 			else {
 				throw new ToyVMException("Can't handle " + heapRef,frame);
 			}
-			Console.WriteLine("Stored {0} at index {1}",val,index);
+			if (log.IsDebugEnabled) log.DebugFormat("Stored {0} at index {1}",val,index);
 			
 		}
 	}

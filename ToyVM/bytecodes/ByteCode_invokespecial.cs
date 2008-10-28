@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_invokespecial : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_invokespecial));
 		ConstantPoolInfo_MethodRef method;
 		public ByteCode_invokespecial(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
@@ -33,15 +34,15 @@ namespace ToyVM.bytecodes
 			ClassFile clazz = ToyVMClassLoader.loadClass(method.GetClassInfo().getClassName());
 			
 			ConstantPoolInfo_NameAndType nameAndType = method.GetMethodNameAndType();
-			Console.WriteLine("Will be executing {0} on {1}",nameAndType,clazz.GetName());
+			if (log.IsDebugEnabled) log.DebugFormat("Will be executing {0} on {1}",nameAndType,clazz.GetName());
 			MethodInfo methodInfo = clazz.getMethod(nameAndType);			
 			StackFrame frame2 = new StackFrame(frame);
 			int paramCount = method.getParameterCount();
 			frame2.setMethod(clazz,methodInfo,paramCount);
 			
 			
-			Console.WriteLine("Have {0} parameters",paramCount);
-			Console.WriteLine("Max Locals: {0}",methodInfo.getMaxLocals());
+			if (log.IsDebugEnabled) log.DebugFormat("Have {0} parameters",paramCount);
+			if (log.IsDebugEnabled) log.DebugFormat("Max Locals: {0}",methodInfo.getMaxLocals());
 			// push "this" as local variable 0
 			
 			
@@ -51,7 +52,7 @@ namespace ToyVM.bytecodes
 			// into the local variables of the outgoing frame
 			for (int i = paramCount;i >= 0; i--){
 				frame2.getLocalVariables()[i]=frame.popOperand();
-				Console.WriteLine("Set variable {0}={1}",(i),frame2.getLocalVariables()[i]);
+				if (log.IsDebugEnabled) log.DebugFormat("Set variable {0}={1}",(i),frame2.getLocalVariables()[i]);
 			}
 			
 				

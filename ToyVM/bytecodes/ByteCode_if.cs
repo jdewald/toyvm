@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_if: ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_if));
 		short branch;
 		int opval = -1;
 		
@@ -60,7 +61,7 @@ namespace ToyVM.bytecodes
 		public override void execute (StackFrame frame)
 		{
 			Object oper = frame.popOperand();
-			Console.WriteLine("Oper is {0}",oper);
+			if (log.IsDebugEnabled) log.DebugFormat("Oper is {0}",oper);
 			int pc = frame.getProgramCounter();
 			bool eval = false;
 			switch (opval){
@@ -101,7 +102,7 @@ namespace ToyVM.bytecodes
 			
 			if (eval){
 				frame.setProgramCounter(pc + branch - size);
-				Console.WriteLine("Jumping to " + (frame.getProgramCounter() + size)); 
+				if (log.IsDebugEnabled) log.DebugFormat("Jumping to " + (frame.getProgramCounter() + size)); 
 			}
 		}
 

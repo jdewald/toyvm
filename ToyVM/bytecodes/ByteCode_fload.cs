@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +7,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_fload : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_fload));
 		int index; // which thing are we loading
 		
 		public ByteCode_fload(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
@@ -29,7 +30,7 @@ namespace ToyVM.bytecodes
 		
 		public override void execute (StackFrame frame)
 		{
-			Console.WriteLine("Variable at {0} is {1}",index,frame.getLocalVariables()[index]);
+			if (log.IsDebugEnabled) log.DebugFormat("Variable at {0} is {1}",index,frame.getLocalVariables()[index]);
 			if (frame.getLocalVariables()[index] is ConstantPoolInfo_Float){		
 				frame.pushOperand(((ConstantPoolInfo_Float)frame.getLocalVariables()[index]).getValue());
 			}

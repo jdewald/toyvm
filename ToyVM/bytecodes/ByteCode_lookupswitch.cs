@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -7,6 +8,7 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_lookupswitch: ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_lookupswitch));
 		int defaultBranch;
 		int pairs;
 		
@@ -26,19 +28,19 @@ namespace ToyVM.bytecodes
 			}
 			size += padCount;
 			
-			Console.WriteLine("Read {0} pad characters, offset={1}",padCount,instructionOffset);
+			//if (log.IsDebugEnabled) log.DebugFormat("Read {0} pad characters, offset={1}",padCount,instructionOffset);
 			// these are actually signed... will casting actually work?
 			// for some reason these aren't MSB->LSB
 			defaultBranch = (int)reader.ReadUInt32();
 			pairs = (int)reader.ReadUInt32();
-			Console.WriteLine("{0}/{0:X} pairs ",pairs);
+//			if (log.IsDebugEnabled) log.DebugFormat("{0}/{0:X} pairs ",pairs);
 			size += 8;
 			
 			for (int i = 0; i < pairs; i++){
 				int match = (int)reader.ReadUInt32();
 				int offset = (int)reader.ReadUInt32();
 				matchPairs.Add(match,offset);
-				Console.WriteLine("Pair: {0}->{1}",match,offset);
+				//if (log.IsDebugEnabled) log.DebugFormat("Pair: {0}->{1}",match,offset);
 				size += 8;
 			}
 		}

@@ -27,7 +27,7 @@ namespace ToyVM.bytecodes
 		public override void execute (StackFrame frame)
 		{
 			try {
-				//Console.WriteLine("Local variable {0} is {1}",index,frame.getLocalVariables()[index]);
+				//if (log.IsDebugEnabled) log.DebugFormat("Local variable {0} is {1}",index,frame.getLocalVariables()[index]);
 				frame.pushOperand(frame.getLocalVariables()[index]);
 			}
 			catch (Exception e){

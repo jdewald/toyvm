@@ -29,7 +29,7 @@ namespace ToyVM.bytecodes
 		
 		public override void execute (StackFrame frame)
 		{
-			Console.WriteLine("Reference is {0}",reference);
+			
 			if (reference is ConstantPoolInfo_String){
 				// TODO: This should actually use an instance of java/lang/String
 				ClassFile stringClass = ToyVMClassLoader.loadClass("java/lang/String");

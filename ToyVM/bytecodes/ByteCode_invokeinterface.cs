@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -9,15 +9,16 @@ namespace ToyVM.bytecodes
 	/// </summary>
 	public class ByteCode_invokeinterface : ByteCode
 	{
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_invokeinterface));
 		ConstantPoolInfo_InterfaceMethodRef method;
-		int count;
+		
 		public ByteCode_invokeinterface(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
 			name = "invokeinterface";
 			size = 5; // 2 bytes defining index into operand pool
 			
 			UInt16 methodIndex = reader.ReadUInt16();
-			count = reader.ReadByte();
+			reader.ReadByte(); // count - unused
 			reader.ReadByte(); // 0;
 			method = (ConstantPoolInfo_InterfaceMethodRef)pool[methodIndex - 1];
 		}
@@ -39,7 +40,7 @@ namespace ToyVM.bytecodes
 
 			
 			ConstantPoolInfo_NameAndType nameAndType = method.GetMethodNameAndType();
-			Console.WriteLine("Will be executing {0} on interface {1}",nameAndType,method.GetClassInfo().getClassName());
+			if (log.IsDebugEnabled) log.DebugFormat("Will be executing {0} on interface {1}",nameAndType,method.GetClassInfo().getClassName());
 			
 			int paramCount = method.getParameterCount();
 			
@@ -61,7 +62,7 @@ namespace ToyVM.bytecodes
 			
 			frame2.setMethod(clazz,clazz.getMethod(nameAndType));
 			
-			Console.WriteLine("Have {0} parameters",paramCount);
+			if (log.IsDebugEnabled) log.DebugFormat("Have {0} parameters",paramCount);
 		
 			
 			for (int i = 0;i <= paramCount; i++){

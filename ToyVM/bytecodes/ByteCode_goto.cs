@@ -1,5 +1,5 @@
 using System;
-
+using log4net;
 namespace ToyVM.bytecodes
 {
 	/// <summary>
@@ -9,6 +9,7 @@ namespace ToyVM.bytecodes
 	{
 		int branch;
 
+		static readonly ILog log = LogManager.GetLogger(typeof(ByteCode_goto));
 		public ByteCode_goto(byte code,MSBBinaryReaderWrapper reader,ConstantPoolInfo[] pool) : base(code)
 		{
 			name = "goto";
@@ -28,7 +29,7 @@ namespace ToyVM.bytecodes
 		{
 			int pc = frame.getProgramCounter();
 			frame.setProgramCounter(pc + branch - size);
-			Console.WriteLine("Going to {0}",frame.getProgramCounter() + size);
+			if (log.IsDebugEnabled) log.DebugFormat("Going to {0}",frame.getProgramCounter() + size);
 			
 			
 		}
